@@ -177,4 +177,32 @@ public class JpaDemoApplicationTests {
 
 		assertNotEquals(userRepo.findById(1000L).get().likedPosts.size(),1);
 	}
+
+	@Test
+	public void PostCanUseExistingUser() {
+		User user1 = new User();
+		Post post1 = new Post();
+		Post post2 = new Post();
+		user1.id = 1L;
+		post1.id = 1L;
+		post2.id = 2L;
+		user1.name = "Kevin";
+		post1.author = user1;
+		post1.contents = "Hello";
+		post2.contents = "World";
+		user1.posts = new ArrayList<Post>();
+		user1.posts.add(post1);
+		user1.posts.add(post2);
+
+		//userRepo.save(user1);
+		postRepo.save(post1);
+		post2.author = postRepo.findById(post1.id).get().author;
+		postRepo.save(post2);
+
+		List<User> allUsers = userRepo.findAll();
+		List<Post> allPosts = postRepo.findAll();
+
+		assertEquals(allPosts.size(),2);
+		assertEquals(allUsers.size(),1);
+	}
 }
